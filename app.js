@@ -12,5 +12,3 @@ firebase.initializeApp(config)
 
 // Sign into the database anonymously
 firebase.auth().signInAnonymously()
-
-var rootRef = firebase.database().ref()
