@@ -33,16 +33,15 @@ function readWoofsInDatabase () {
 // UPDATE the woof in Firebase
 function updateWoofInDatabase (woofKey, woofText) {
   // update the record in Firebase
-  firebase.database().ref('woofs').child(woofKey).set({
-    text: woofText
-  })
+  var refPath = 'woofs/' + woofKey + '/text'
+  firebase.database().ref(refPath).set(woofText)
 }
 
 // DELETE the woof from Firebase
 function deleteWoofFromDatabase (woofKey) {
   // delete the record from Firebase
-  firebase.database().ref('woofs').child(woofKey).remove()
-  deleteWoof()
+  var referencePath = 'woofs/' + woofKey
+  firebase.database().ref(referencePath).remove()
 }
 
 // Load all of the data
