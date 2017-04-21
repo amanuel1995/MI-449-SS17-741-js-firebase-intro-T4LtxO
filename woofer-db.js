@@ -1,51 +1,49 @@
 // Declare variables
-var woofButton = document.getElementById('woof-button')
-var inputText = document.getElementById('woof-text')
-var createdAt = new Date()
-var time = createdAt + '.'
-var creationTime = time
+var creationTime = Date.now()
 
 // CREATE a new woof in Firebase
 function createWoofInDatabase (woof) {
-  // create a new record in Firebase
-  woof = inputText.value
-  firebase.database().ref('woofs').push({
-    created_at: creationTime,
-    text: woof
-  })
+  if( woofText.value !== '' ){ // if the text field is not empty
+    // create a new record in Firebase
+    woof = woofText.value
+    firebase.database().ref('woofs').push({
+      created_at: creationTime,
+      text: woof
+    })
+  }
 }
-  //rootRef.child(inputText.value).set({
 
 // READ from Firebase when woofs are added, changed, or removed
 // Call addWoofRow, updateWoofRow, and deleteWoofRow to update the page
 function readWoofsInDatabase () {
-  // TODO read new, changed, and deleted Firebase records
+  // read new, changed, and deleted Firebase records
+  firebase.database().ref('woofs').on('child_added', function (woofSnapshot) {
+    addWoofRow (woofSnapshot.key, woofSnapshot.val())
+  })
+
+  firebase.database().ref('woofs').on('child_changed', function (woofSnapshot) {
+    updateWoofRow (woofSnapshot.key, woofSnapshot.val())
+  })
+
+  firebase.database().ref('woofs').on('child_removed', function (woofSnapshot) {
+    deleteWoofRow(woofSnapshot.key)
+  })
 }
 
 // UPDATE the woof in Firebase
 function updateWoofInDatabase (woofKey, woofText) {
-  // TODO update the record in Firebase
+  // update the record in Firebase
+  firebase.database().ref('woofs').child(woofKey).set({
+    text: woofText
+  })
 }
 
 // DELETE the woof from Firebase
 function deleteWoofFromDatabase (woofKey) {
-  // TODO delete the record from Firebase
+  // delete the record from Firebase
+  firebase.database().ref('woofs').child(woofKey).remove()
+  deleteWoof()
 }
 
 // Load all of the data
 readWoofsInDatabase()
-
-// add event listeners
-woofButton.addEventListener('click', function (buttonClick) {
-  console.log("Some shit happened.")
-  createWoofInDatabase()
-})
-
-// trigger same action as button click on Enter Key
-inputText.addEventListener('keyup', function (event) {
-  event.preventDefault()
-  if (event.keyCode === 13) {
-    woofButton.click()
-    console.log("Enter Key pressed.")
-  }
-})
